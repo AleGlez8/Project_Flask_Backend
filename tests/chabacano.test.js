@@ -5,14 +5,18 @@ test('navegar a la página principal', async ({ page }) => {
     await expect(page).toHaveTitle(/Joyería Chabacano México – Chabacano MX/);
 });
 
-test('verificar texto de bienvenida', async ({ page }) => {
+test('verificar enlaces de navegación', async ({ page }) => {
+    // Ir a la página principal
     await page.goto('https://chabacano.mx/');
-    const welcomeText = await page.textContent('h1');  // Asumiendo que el texto de bienvenida está en un h1
-    expect(welcomeText).toBe('¡Bienvenidos a Chabacano!');  // Ajusta el texto esperado según corresponda
-});
 
-test('verificar navegación de enlaces', async ({ page }) => {
-    await page.goto('https://chabacano.mx/');
-    await page.click('text=Productos');  // Supón que hay un enlace o botón de Productos
-    await expect(page).toHaveURL(/.*productos/);  // Verifica que la URL cambie adecuadamente
+    // Verificar el enlace a la página 'Anillos'
+    await page.click('a[href="/collections/anillos"]');
+    await expect(page).toHaveURL('https://chabacano.mx/collections/anillos');
+
+    // Volver a la página principal
+    await page.goBack();
+
+    // Verificar el enlace a la página 'Contacto'
+    await page.click('a[href="/collections/pulseras"]');
+    await expect(page).toHaveURL('https://chabacano.mx/collections/pulseras');
 });
