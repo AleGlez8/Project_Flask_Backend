@@ -33,3 +33,17 @@ class ReservationModel(db.Model):
 
     def __repr__(self):
         return f"<Reservation(user_id={self.user_id}, restaurant_id={self.restaurant_id})>"
+
+# Modelo de Menú
+class MenuModel(db.Model):
+    __tablename__ = 'menus'
+    id = db.Column(db.Integer, primary_key=True)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+    price = db.Column(db.Float, nullable=False)
+
+    restaurant = db.relationship('RestaurantModel', backref=db.backref('menus', lazy=True))
+
+    def __repr__(self):
+        return f"<Menu(name={self.name}, price={self.price})>"

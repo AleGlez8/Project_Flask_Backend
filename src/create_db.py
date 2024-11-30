@@ -3,4 +3,4 @@ from api.extensions import db
 
 with app.app_context():
     db.create_all()
-    print("Base de datos creada con éxito.")
+    print("Base de datos actualizada con éxito.")

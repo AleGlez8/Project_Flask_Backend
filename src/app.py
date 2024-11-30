@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from api.extensions import db
-from api.controllers import Users, Restaurants, Reservations
+from api.controllers import Users, Restaurants, Reservations, Menus
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurant.db'
@@ -13,6 +13,7 @@ db.init_app(app)
 api.add_resource(Users, "/api/users")
 api.add_resource(Restaurants, "/api/restaurants")
 api.add_resource(Reservations, "/api/reservations")
+api.add_resource(Menus, "/api/menus")
 
 if __name__ == '__main__':
     with app.app_context():
