@@ -19,7 +19,6 @@ import { test, expect } from '@playwright/test';
 //     await expect(page.locator("button[class='popout__toggle']")).toBeVisible();
 // });
 
-//YA FUNCIONA
 test('navigation links', async ({ page }) => {
     await page.goto('https://chabacano.mx/', { timeout: 30000 });
     const links = [
@@ -34,7 +33,6 @@ test('navigation links', async ({ page }) => {
     }
 });
 
-//YA FUNCIONA
 test('add to cart', async ({ page }) => {
     await page.goto('https://chabacano.mx/', { timeout: 30000 });
     await page.waitForSelector('a.navlink:has(span.navtext:has-text("ARETES"))');
@@ -46,7 +44,6 @@ test('add to cart', async ({ page }) => {
     await page.click('button[name="add"]');
 });
 
-//YA FUNCIONA
 test('add to cart with login', async ({ page }) => {
     await page.goto('https://chabacano.mx/', { timeout: 40000 });
     await expect(page).toHaveTitle(/Joyería Chabacano México – Chabacano MX/);
@@ -87,7 +84,48 @@ test('add to cart with login', async ({ page }) => {
     await expect(purchasedItem).toBeVisible();
 });
 
-//YA FUNCIONA
+test('product', async ({ page }) => {
+    await page.goto('https://chabacano.mx/', { timeout: 40000 });
+    await expect(page).toHaveTitle(/Joyería Chabacano México – Chabacano MX/);
+    const ProductLink = page.locator('a.product-link:has(p.product-item__title:has-text("Aretes Acuata"))');
+    await expect(ProductLink).toBeVisible();
+    const NameProduct = ProductLink.locator('p.product-item__title')
+    const NameText = await NameProduct.innerText()
+    console.log('Nombre del producto: ', NameText);
+    const ProductPrice = ProductLink.locator('.new-price');
+    const priceText = await ProductPrice.innerText();
+    console.log('El precio del producto es:', priceText);
+    await ProductLink.click();
+    await expect(page).toHaveURL(/.*aretes-acuata/);
+    const productTitle = page.locator('h1.product__title span');
+    await expect(productTitle).toBeVisible();
+    const titleText = await productTitle.innerText();
+    expect(titleText).toContain('Aretes Acuata');
+    console.log('El título del producto es:', titleText);
+    const productPriceContainer = page.locator('div.product__price').first();
+    await expect(productPriceContainer).toBeVisible();
+    const originalPrice = page.locator('s.product__price--strike').first();
+    await expect(originalPrice).toBeVisible();
+    const originalPriceText = await originalPrice.innerText();
+    console.log('El precio original del producto es:', originalPriceText);
+    const discountBadge = page.locator('span.discount-badge');
+    await expect(discountBadge).toBeVisible();
+    const discountText = await discountBadge.innerText();
+    console.log('El descuento es:', discountText);
+    const discountedPrice = page.locator('span.product__price--sale').first(); 
+    await expect(discountedPrice).toBeVisible(); 
+    const discountedPriceText = await discountedPrice.innerText(); 
+    console.log('El precio final del producto es:', discountedPriceText); 
+    if (priceText && originalPriceText && discountText) {
+        console.log('El producto tiene precio actual, precio original y descuento visible.');
+    } else {
+        console.log('Faltan elementos de precio o descuento en el producto.');
+    }
+    const addToCartButton = page.locator('#AddToCart--template--23824221897016__main');
+    await expect(addToCartButton).toBeVisible();
+    console.log('El botón de "Agregar al carrito" está visible.');
+});
+
 test('login', async ({ page }) => {
     await page.goto('https://chabacano.mx/', { timeout: 40000 });
     await expect(page).toHaveTitle(/Joyería Chabacano México – Chabacano MX/);
