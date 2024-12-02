@@ -1,7 +1,5 @@
 from datetime import datetime
-import pytest
 import unittest
-from unittest.mock import patch
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
@@ -18,13 +16,17 @@ class TestRestaurantReservationSystem(unittest.TestCase):
         cls.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         cls.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         
-        # Initialize the database
         db.init_app(cls.app)
+        api = Api(cls.app)
         
-        # Create the test client
+        # Register the routes
+        api.add_resource(Users, '/api/users', '/api/users/<int:user_id>')
+        api.add_resource(Restaurants, '/api/restaurants', '/api/restaurants/<int:restaurant_id>')
+        api.add_resource(Reservations, '/api/reservations', '/api/reservations/<int:reservation_id>')
+        api.add_resource(Menus, '/api/menus', '/api/menus/<int:menu_id>')
+
         cls.client = cls.app.test_client()
         
-        # Create all database tables
         with cls.app.app_context():
             db.create_all()
 
@@ -37,7 +39,6 @@ class TestRestaurantReservationSystem(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
-    # --- USER TESTS ---
     def test_create_user(self):
         response = self.client.post('/api/users', json={
             'username': 'User',
@@ -79,7 +80,6 @@ class TestRestaurantReservationSystem(unittest.TestCase):
         response = self.client.delete('/api/users/1')
         self.assertIn(response.status_code, [204, 404])
 
-    # --- RESTAURANT TESTS ---
     def test_create_restaurant(self):
         response = self.client.post('/api/restaurants', json={
             'name': 'Test Restaurant',
@@ -94,7 +94,6 @@ class TestRestaurantReservationSystem(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.json, list)
 
-    # --- RESERVATION TESTS ---
     def test_create_reservation(self):
         self.client.post('/api/users', json={
             'username': 'Test User',
